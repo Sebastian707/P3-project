@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using StarterAssets;
 using UnityEngine;
+using Xenon;
 
 public class PlayerInteract : MonoBehaviour
 {
@@ -10,12 +11,12 @@ public class PlayerInteract : MonoBehaviour
     private Camera cam;
     private PlayerUI playerUI;
 
-    // Keep track of the currently highlighted interactable
     private Interactable currentInteractable;
     private int originalLayer;
 
     void Start()
     {
+     
         cam = GetComponent<PlayerController>().playerCamera;
         playerUI = GetComponent<PlayerUI>();
     }
