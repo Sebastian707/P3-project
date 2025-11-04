@@ -2183,7 +2183,7 @@ MonoBehaviour:
   alignmentThreshold: 0.05
   initialRotationMin: 75
   initialRotationMax: 99
-  completionAlignmentPercentage: 99
+  completionAlignmentPercentage: 99.4
   rotationSpeed: 80
   playerCamera: {fileID: 852246338}
   puzzleCamera: {fileID: 1797925809}
