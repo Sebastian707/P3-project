@@ -55,6 +55,7 @@ namespace StarterAssets
 
         void RotateCamera()
         {
+            if (Time.timeScale == 0) return;
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
             float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
@@ -62,9 +63,9 @@ namespace StarterAssets
             xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
             // Rotate camera vertically
+            transform.Rotate(Vector3.up * mouseX);
             playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
             // Rotate player horizontally
-            transform.Rotate(Vector3.up * mouseX);
         }
     }
 }

@@ -13,6 +13,7 @@ public class Interactable_Console : Interactable
 
     protected override void Interact()
     {
+        UIInfoManager.Instance.ShowMessage("");
         audioSource.PlayOneShot(interactSound);
         foreach (var obj in objectsToEnable)
         {
