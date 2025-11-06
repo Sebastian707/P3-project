@@ -1245,7 +1245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 061f4cd24b8f6f74dae82dadee9ed1fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptMessage: Turn on Light
+  promptMessage: '[E]'
   objectsToEnable:
   - {fileID: 1722354070}
   - {fileID: 1449870629}
@@ -4820,7 +4820,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 061f4cd24b8f6f74dae82dadee9ed1fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptMessage: Turn on Light
+  promptMessage: '[E]'
   objectsToEnable:
   - {fileID: 1449870629}
   - {fileID: 704670798}
@@ -5051,7 +5051,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 061f4cd24b8f6f74dae82dadee9ed1fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptMessage: Turn on Light
+  promptMessage: '[E]'
   objectsToEnable:
   - {fileID: 1008038133}
   - {fileID: 1449870629}
@@ -5646,7 +5646,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 061f4cd24b8f6f74dae82dadee9ed1fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptMessage: Turn on Light
+  promptMessage: '[E]'
   objectsToEnable:
   - {fileID: 704670798}
   - {fileID: 884787277}
@@ -7362,7 +7362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 061f4cd24b8f6f74dae82dadee9ed1fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptMessage: Turn on Light
+  promptMessage: '[E]'
   objectsToEnable:
   - {fileID: 1722354070}
   - {fileID: 260266734}
@@ -15558,7 +15558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 061f4cd24b8f6f74dae82dadee9ed1fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptMessage: Turn on Light
+  promptMessage: '[E]'
   objectsToEnable:
   - {fileID: 884787277}
   interactSound: {fileID: 8300000, guid: 8b0ecdba804710840940b0ad02a3b525, type: 3}
