@@ -2176,10 +2176,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   promptMessage: Silhouette puzzle
-  solutionImage: {fileID: 2800000, guid: 3e9cfbe3363b7a1478e02963c9cba861, type: 3}
+  solutionImage: {fileID: 2800000, guid: 98da25abc4f74fe41be78e7ddd384a63, type: 3}
   cubePrefab: {fileID: 8641057012593113312, guid: a16032641fcff4a4bbb69fea7f0a8585, type: 3}
-  cubeSize: 0.05
-  pixelSkip: 1
   alignmentThreshold: 0.05
   initialRotationMin: 75
   initialRotationMax: 99
@@ -2190,6 +2188,7 @@ MonoBehaviour:
   alignmentText: {fileID: 1313571836}
   zScatterMultiplier: 0.2
   playerMovementScript: {fileID: 4416926083347132228}
+  maxPuzzleSize: 1
 --- !u!65 &894194562
 BoxCollider:
   m_ObjectHideFlags: 0

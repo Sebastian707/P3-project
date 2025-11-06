@@ -7,7 +7,6 @@ public class SilhouettePuzzle : Interactable
     [Header("Puzzle Settings")]
     [SerializeField] private Texture2D solutionImage;
     [SerializeField] private GameObject cubePrefab;
-    [SerializeField] private float cubeSize = 0.1f;
     [SerializeField] private float alignmentThreshold = 0.05f;
     [SerializeField] private float initialRotationMin = 45f;
     [SerializeField] private float initialRotationMax = 60f;
@@ -27,19 +26,25 @@ public class SilhouettePuzzle : Interactable
     [Header("Player Control")]
     [SerializeField] private MonoBehaviour playerMovementScript;
 
+    [Header("Puzzle Scaling")]
+    [SerializeField] private float maxPuzzleSize = 2f; // max width/height of puzzle in world units
+
     private GameObject cubeContainer;
     private Vector3[] solutionPositions;
     private Vector3[] solutionViewportPositions;
     private GameObject[] cubes;
-    private float[] initialZOffsets; // Stores initial random Z offsets
+    private float[] initialZOffsets;
+    private float cubeSize;
     private bool puzzleActive = false;
     private bool puzzleCompleted = false;
     private bool completionCoroutineRunning = false;
     private Vector3 currentRotationEuler;
     private MeshRenderer meshRenderer;
     private bool interactionLocked = false;
-    
+
+    // -----------------------------
     // Interact System
+    // -----------------------------
     protected override void Interact()
     {
         if (interactionLocked) return;
@@ -64,10 +69,8 @@ public class SilhouettePuzzle : Interactable
 
         // Activate cubes
         for (int i = 0; i < cubes.Length; i++)
-        {
             if (cubes[i] != null)
                 cubes[i].SetActive(true);
-        }
 
         if (alignmentText != null)
         {
@@ -92,10 +95,8 @@ public class SilhouettePuzzle : Interactable
 
         // Deactivate cubes
         for (int i = 0; i < cubes.Length; i++)
-        {
             if (cubes[i] != null)
                 cubes[i].SetActive(false);
-        }
 
         if (alignmentText != null)
             alignmentText.gameObject.SetActive(false);
@@ -110,8 +111,10 @@ public class SilhouettePuzzle : Interactable
         yield return null;
         interactionLocked = false;
     }
-    
+
+    // -----------------------------
     // Initialization
+    // -----------------------------
     private void Start()
     {
         if (playerCamera == null) Debug.LogError("Player camera not assigned!");
@@ -129,8 +132,10 @@ public class SilhouettePuzzle : Interactable
         GenerateSolutionViewportPositions();
         DynamicScatterPuzzle();
     }
-    
+
+    // -----------------------------
     // Runtime Logic
+    // -----------------------------
     private void Update()
     {
         if (!puzzleActive && !puzzleCompleted) return;
@@ -158,8 +163,10 @@ public class SilhouettePuzzle : Interactable
             cubeContainer.transform.eulerAngles = currentRotationEuler;
         }
     }
-    
+
+    // -----------------------------
     // Alignment + Z adjustment
+    // -----------------------------
     private void UpdateAlignment()
     {
         if (cubes == null || solutionViewportPositions == null || puzzleCamera == null || puzzleCompleted) return;
@@ -182,7 +189,7 @@ public class SilhouettePuzzle : Interactable
         if (alignmentText != null && alignmentText.gameObject.activeSelf)
             alignmentText.text = $"Alignment: {percent * 100f:F0}%";
 
-        // Scale initial Z offsets toward zero as alignment increases
+        // Shrink Z offsets based on alignment
         for (int i = 0; i < cubes.Length; i++)
         {
             if (cubes[i] == null) continue;
@@ -226,7 +233,9 @@ public class SilhouettePuzzle : Interactable
             alignmentText.text = "Alignment: 0%";
     }
 
+    // -----------------------------
     // Puzzle Generation
+    // -----------------------------
     private void GeneratePuzzle()
     {
         if (solutionImage == null || cubePrefab == null) return;
@@ -239,12 +248,17 @@ public class SilhouettePuzzle : Interactable
         int width = solutionImage.width;
         int height = solutionImage.height;
 
+        // scale cubes to fit max puzzle size
+        float cubeSizeX = maxPuzzleSize / width;
+        float cubeSizeY = maxPuzzleSize / height;
+        cubeSize = Mathf.Min(cubeSizeX, cubeSizeY);
+
         // Count black pixels
         int blackPixelCount = 0;
         for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-            if (solutionImage.GetPixel(x, y).r < 0.5f)
-                blackPixelCount++;
+            for (int x = 0; x < width; x++)
+                if (solutionImage.GetPixel(x, y).r < 0.5f)
+                    blackPixelCount++;
 
         solutionPositions = new Vector3[blackPixelCount];
         cubes = new GameObject[blackPixelCount];
@@ -267,7 +281,7 @@ public class SilhouettePuzzle : Interactable
                     GameObject cube = Instantiate(cubePrefab, cubeContainer.transform);
                     cube.transform.localPosition = localPos;
                     cube.transform.localScale = Vector3.one * cubeSize;
-                    cube.SetActive(false); // inactive until interact
+                    cube.SetActive(false);
                     cubes[index] = cube;
 
                     index++;
@@ -291,8 +305,10 @@ public class SilhouettePuzzle : Interactable
         cubeContainer.transform.eulerAngles = prevRotation;
         currentRotationEuler = cubeContainer.transform.eulerAngles;
     }
-    
+
+    // -----------------------------
     // Initial Z Scatter
+    // -----------------------------
     private void DynamicScatterPuzzle()
     {
         if (cubes == null || cubeContainer == null || solutionPositions == null || puzzleCamera == null) return;
@@ -310,7 +326,7 @@ public class SilhouettePuzzle : Interactable
 
             cubes[i].transform.localPosition = new Vector3(basePos.x, basePos.y, randomZ);
             cubes[i].transform.localScale = Vector3.one * cubeSize;
-            cubes[i].SetActive(false); // ensure cubes stay inactive until interact
+            cubes[i].SetActive(false); // ensure inactive until interact
         }
 
         float rotX = Random.Range(initialRotationMin, initialRotationMax);
