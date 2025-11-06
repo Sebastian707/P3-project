@@ -8,7 +8,6 @@ public class SilhouettePuzzle : Interactable
     [SerializeField] private Texture2D solutionImage;
     [SerializeField] private GameObject cubePrefab;
     [SerializeField] private float cubeSize = 0.1f;
-    [SerializeField, Range(1, 8)] private int pixelSkip = 1;
     [SerializeField] private float alignmentThreshold = 0.05f;
     [SerializeField] private float initialRotationMin = 45f;
     [SerializeField] private float initialRotationMax = 60f;
@@ -39,10 +38,8 @@ public class SilhouettePuzzle : Interactable
     private Vector3 currentRotationEuler;
     private MeshRenderer meshRenderer;
     private bool interactionLocked = false;
-
-    // -----------------------------
+    
     // Interact System
-    // -----------------------------
     protected override void Interact()
     {
         if (interactionLocked) return;
@@ -113,10 +110,8 @@ public class SilhouettePuzzle : Interactable
         yield return null;
         interactionLocked = false;
     }
-
-    // -----------------------------
+    
     // Initialization
-    // -----------------------------
     private void Start()
     {
         if (playerCamera == null) Debug.LogError("Player camera not assigned!");
@@ -134,10 +129,8 @@ public class SilhouettePuzzle : Interactable
         GenerateSolutionViewportPositions();
         DynamicScatterPuzzle();
     }
-
-    // -----------------------------
+    
     // Runtime Logic
-    // -----------------------------
     private void Update()
     {
         if (!puzzleActive && !puzzleCompleted) return;
@@ -165,10 +158,8 @@ public class SilhouettePuzzle : Interactable
             cubeContainer.transform.eulerAngles = currentRotationEuler;
         }
     }
-
-    // -----------------------------
+    
     // Alignment + Z adjustment
-    // -----------------------------
     private void UpdateAlignment()
     {
         if (cubes == null || solutionViewportPositions == null || puzzleCamera == null || puzzleCompleted) return;
@@ -235,9 +226,7 @@ public class SilhouettePuzzle : Interactable
             alignmentText.text = "Alignment: 0%";
     }
 
-    // -----------------------------
     // Puzzle Generation
-    // -----------------------------
     private void GeneratePuzzle()
     {
         if (solutionImage == null || cubePrefab == null) return;
@@ -250,10 +239,12 @@ public class SilhouettePuzzle : Interactable
         int width = solutionImage.width;
         int height = solutionImage.height;
 
+        // Count black pixels
         int blackPixelCount = 0;
-        for (int y = 0; y < height; y += pixelSkip)
-            for (int x = 0; x < width; x += pixelSkip)
-                if (solutionImage.GetPixel(x, y).r < 0.5f) blackPixelCount++;
+        for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
+            if (solutionImage.GetPixel(x, y).r < 0.5f)
+                blackPixelCount++;
 
         solutionPositions = new Vector3[blackPixelCount];
         cubes = new GameObject[blackPixelCount];
@@ -264,9 +255,9 @@ public class SilhouettePuzzle : Interactable
         Vector3 origin = new Vector3(-imageWidth / 2f, -imageHeight / 2f, 0f);
 
         int index = 0;
-        for (int y = 0; y < height; y += pixelSkip)
+        for (int y = 0; y < height; y++)
         {
-            for (int x = 0; x < width; x += pixelSkip)
+            for (int x = 0; x < width; x++)
             {
                 if (solutionImage.GetPixel(x, y).r < 0.5f)
                 {
@@ -276,8 +267,9 @@ public class SilhouettePuzzle : Interactable
                     GameObject cube = Instantiate(cubePrefab, cubeContainer.transform);
                     cube.transform.localPosition = localPos;
                     cube.transform.localScale = Vector3.one * cubeSize;
-                    cube.SetActive(false); // <--- cubes inactive by default
+                    cube.SetActive(false); // inactive until interact
                     cubes[index] = cube;
+
                     index++;
                 }
             }
@@ -299,10 +291,8 @@ public class SilhouettePuzzle : Interactable
         cubeContainer.transform.eulerAngles = prevRotation;
         currentRotationEuler = cubeContainer.transform.eulerAngles;
     }
-
-    // -----------------------------
+    
     // Initial Z Scatter
-    // -----------------------------
     private void DynamicScatterPuzzle()
     {
         if (cubes == null || cubeContainer == null || solutionPositions == null || puzzleCamera == null) return;
