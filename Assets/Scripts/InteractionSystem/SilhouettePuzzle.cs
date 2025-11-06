@@ -12,7 +12,7 @@ public class SilhouettePuzzle : Interactable
     [SerializeField] private float alignmentThreshold = 0.05f;
     [SerializeField] private float initialRotationMin = 45f;
     [SerializeField] private float initialRotationMax = 60f;
-    [SerializeField, Range(0, 100)] private float completionAlignmentPercentage = 98f; // % needed for win
+    [SerializeField, Range(0, 100)] private float completionAlignmentPercentage = 98f;
 
     [Header("Rotation Settings")]
     [SerializeField] private float rotationSpeed = 100f;
@@ -25,19 +25,28 @@ public class SilhouettePuzzle : Interactable
     [Header("Z-axis Scatter")]
     [SerializeField] private float zScatterMultiplier = 0.05f;
 
+    [Header("Player Control")]
+    [SerializeField] private MonoBehaviour playerMovementScript;
+
     private GameObject cubeContainer;
     private Vector3[] solutionPositions;
     private Vector3[] solutionViewportPositions;
     private GameObject[] cubes;
+    private float[] initialZOffsets; // Stores initial random Z offsets
     private bool puzzleActive = false;
     private bool puzzleCompleted = false;
     private bool completionCoroutineRunning = false;
     private Vector3 currentRotationEuler;
     private MeshRenderer meshRenderer;
+    private bool interactionLocked = false;
 
-    // Interaction
+    // -----------------------------
+    // Interact System
+    // -----------------------------
     protected override void Interact()
     {
+        if (interactionLocked) return;
+
         if (puzzleActive)
         {
             StopInteract();
@@ -45,13 +54,23 @@ public class SilhouettePuzzle : Interactable
         }
 
         puzzleActive = true;
-        puzzleCompleted = false;
+        interactionLocked = true;
 
-        if (playerCamera != null) playerCamera.enabled = false;
-        if (puzzleCamera != null) puzzleCamera.enabled = true;
+        if (playerMovementScript != null)
+            playerMovementScript.enabled = false;
+
+        if (playerCamera != null) playerCamera.gameObject.SetActive(false);
+        if (puzzleCamera != null) puzzleCamera.gameObject.SetActive(true);
 
         if (meshRenderer == null) meshRenderer = GetComponent<MeshRenderer>();
         if (meshRenderer != null) meshRenderer.enabled = false;
+
+        // Activate cubes
+        for (int i = 0; i < cubes.Length; i++)
+        {
+            if (cubes[i] != null)
+                cubes[i].SetActive(true);
+        }
 
         if (alignmentText != null)
         {
@@ -62,20 +81,42 @@ public class SilhouettePuzzle : Interactable
 
     public void StopInteract()
     {
+        if (!puzzleActive && !puzzleCompleted) return;
+
         puzzleActive = false;
 
-        if (playerCamera != null) playerCamera.enabled = true;
-        if (puzzleCamera != null) puzzleCamera.enabled = false;
+        if (playerMovementScript != null)
+            playerMovementScript.enabled = true;
+
+        if (playerCamera != null) playerCamera.gameObject.SetActive(true);
+        if (puzzleCamera != null) puzzleCamera.gameObject.SetActive(false);
 
         if (meshRenderer != null) meshRenderer.enabled = true;
+
+        // Deactivate cubes
+        for (int i = 0; i < cubes.Length; i++)
+        {
+            if (cubes[i] != null)
+                cubes[i].SetActive(false);
+        }
 
         if (alignmentText != null)
             alignmentText.gameObject.SetActive(false);
 
         ResetPuzzle();
+
+        StartCoroutine(UnlockInteractionNextFrame());
     }
 
+    private IEnumerator UnlockInteractionNextFrame()
+    {
+        yield return null;
+        interactionLocked = false;
+    }
+
+    // -----------------------------
     // Initialization
+    // -----------------------------
     private void Start()
     {
         if (playerCamera == null) Debug.LogError("Player camera not assigned!");
@@ -86,100 +127,28 @@ public class SilhouettePuzzle : Interactable
         meshRenderer = GetComponent<MeshRenderer>();
         if (alignmentText != null) alignmentText.gameObject.SetActive(false);
 
+        if (playerCamera != null) playerCamera.gameObject.SetActive(true);
+        if (puzzleCamera != null) puzzleCamera.gameObject.SetActive(false);
+
         GeneratePuzzle();
         GenerateSolutionViewportPositions();
         DynamicScatterPuzzle();
     }
 
-    private void GeneratePuzzle()
-    {
-        if (solutionImage == null || cubePrefab == null) return;
-
-        if (cubeContainer != null) Destroy(cubeContainer);
-        cubeContainer = new GameObject("CubeContainer");
-        cubeContainer.transform.SetParent(transform);
-        cubeContainer.transform.localPosition = Vector3.zero;
-
-        int width = solutionImage.width;
-        int height = solutionImage.height;
-
-        int blackPixelCount = 0;
-        for (int y = 0; y < height; y += pixelSkip)
-            for (int x = 0; x < width; x += pixelSkip)
-                if (solutionImage.GetPixel(x, y).r < 0.5f) blackPixelCount++;
-
-        solutionPositions = new Vector3[blackPixelCount];
-        cubes = new GameObject[blackPixelCount];
-
-        float imageWidth = width * cubeSize;
-        float imageHeight = height * cubeSize;
-        Vector3 origin = new Vector3(-imageWidth / 2f, -imageHeight / 2f, 0f);
-
-        int index = 0;
-        for (int y = 0; y < height; y += pixelSkip)
-        {
-            for (int x = 0; x < width; x += pixelSkip)
-            {
-                if (solutionImage.GetPixel(x, y).r < 0.5f)
-                {
-                    Vector3 localPos = origin + new Vector3((x + 0.5f) * cubeSize, (y + 0.5f) * cubeSize, 0f);
-                    solutionPositions[index] = localPos;
-
-                    GameObject cube = Instantiate(cubePrefab, cubeContainer.transform);
-                    cube.transform.localPosition = localPos;
-                    cube.transform.localScale = Vector3.one * cubeSize;
-                    cubes[index] = cube;
-                    index++;
-                }
-            }
-        }
-
-        currentRotationEuler = cubeContainer.transform.eulerAngles;
-    }
-
-    private void GenerateSolutionViewportPositions()
-    {
-        if (cubes == null || puzzleCamera == null) return;
-
-        solutionViewportPositions = new Vector3[cubes.Length];
-        Vector3 prevRotation = cubeContainer.transform.eulerAngles;
-
-        cubeContainer.transform.eulerAngles = Vector3.zero;
-
-        for (int i = 0; i < cubes.Length; i++)
-            solutionViewportPositions[i] = puzzleCamera.WorldToViewportPoint(cubeContainer.transform.TransformPoint(solutionPositions[i]));
-
-        cubeContainer.transform.eulerAngles = prevRotation;
-        currentRotationEuler = cubeContainer.transform.eulerAngles;
-    }
-
-    private void DynamicScatterPuzzle()
-    {
-        if (cubes == null || cubeContainer == null || solutionViewportPositions == null || puzzleCamera == null) return;
-
-        float cameraDistance = Mathf.Abs(puzzleCamera.transform.position.z - cubeContainer.transform.position.z);
-        float scatterDepthMax = cameraDistance * zScatterMultiplier;
-
-        for (int i = 0; i < cubes.Length; i++)
-        {
-            Vector3 solutionPos = solutionPositions[i];
-            float randomZ = Random.Range(-scatterDepthMax, scatterDepthMax);
-            cubes[i].transform.localPosition = new Vector3(solutionPos.x, solutionPos.y, randomZ);
-            cubes[i].transform.localScale = Vector3.one * cubeSize;
-        }
-
-        float rotX = Random.Range(initialRotationMin, initialRotationMax);
-        float rotY = Random.Range(initialRotationMin, initialRotationMax);
-        cubeContainer.transform.eulerAngles = new Vector3(rotX, rotY, 0f);
-        currentRotationEuler = cubeContainer.transform.eulerAngles;
-    }
-
+    // -----------------------------
+    // Runtime Logic
+    // -----------------------------
     private void Update()
     {
         if (!puzzleActive && !puzzleCompleted) return;
 
         HandleRotation();
         UpdateAlignment();
+
+        if (puzzleActive && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)))
+        {
+            StopInteract();
+        }
     }
 
     private void HandleRotation()
@@ -197,10 +166,12 @@ public class SilhouettePuzzle : Interactable
         }
     }
 
+    // -----------------------------
+    // Alignment + Z adjustment
+    // -----------------------------
     private void UpdateAlignment()
     {
-        if (cubes == null || solutionViewportPositions == null || puzzleCamera == null) return;
-        if (puzzleCompleted) return;
+        if (cubes == null || solutionViewportPositions == null || puzzleCamera == null || puzzleCompleted) return;
 
         int aligned = 0;
         for (int i = 0; i < cubes.Length; i++)
@@ -208,16 +179,28 @@ public class SilhouettePuzzle : Interactable
             if (cubes[i] == null) continue;
 
             Vector3 screenPos = puzzleCamera.WorldToViewportPoint(cubes[i].transform.position);
-            float dist = Vector2.Distance(new Vector2(screenPos.x, screenPos.y),
-                                          new Vector2(solutionViewportPositions[i].x, solutionViewportPositions[i].y));
+            float dist = Vector2.Distance(
+                new Vector2(screenPos.x, screenPos.y),
+                new Vector2(solutionViewportPositions[i].x, solutionViewportPositions[i].y)
+            );
+
             if (dist < alignmentThreshold) aligned++;
         }
 
-        float percent = (float)aligned / cubes.Length * 100f;
+        float percent = (float)aligned / cubes.Length; // 0-1
         if (alignmentText != null && alignmentText.gameObject.activeSelf)
-            alignmentText.text = $"Alignment: {percent:F0}%";
+            alignmentText.text = $"Alignment: {percent * 100f:F0}%";
 
-        if (percent >= completionAlignmentPercentage && !completionCoroutineRunning)
+        // Scale initial Z offsets toward zero as alignment increases
+        for (int i = 0; i < cubes.Length; i++)
+        {
+            if (cubes[i] == null) continue;
+            Vector3 basePos = solutionPositions[i];
+            float adjustedZ = initialZOffsets[i] * (1f - percent);
+            cubes[i].transform.localPosition = new Vector3(basePos.x, basePos.y, adjustedZ);
+        }
+
+        if (percent >= completionAlignmentPercentage / 100f && !completionCoroutineRunning)
             StartCoroutine(PuzzleCompleteRoutine());
     }
 
@@ -238,8 +221,6 @@ public class SilhouettePuzzle : Interactable
             alignmentText.text = "Puzzle Complete!";
         }
 
-        Debug.Log("Puzzle Completed!");
-
         yield return new WaitForSeconds(3f);
 
         StopInteract();
@@ -252,5 +233,99 @@ public class SilhouettePuzzle : Interactable
         DynamicScatterPuzzle();
         if (alignmentText != null)
             alignmentText.text = "Alignment: 0%";
+    }
+
+    // -----------------------------
+    // Puzzle Generation
+    // -----------------------------
+    private void GeneratePuzzle()
+    {
+        if (solutionImage == null || cubePrefab == null) return;
+
+        if (cubeContainer != null) Destroy(cubeContainer);
+        cubeContainer = new GameObject("CubeContainer");
+        cubeContainer.transform.SetParent(transform);
+        cubeContainer.transform.localPosition = Vector3.zero;
+
+        int width = solutionImage.width;
+        int height = solutionImage.height;
+
+        int blackPixelCount = 0;
+        for (int y = 0; y < height; y += pixelSkip)
+            for (int x = 0; x < width; x += pixelSkip)
+                if (solutionImage.GetPixel(x, y).r < 0.5f) blackPixelCount++;
+
+        solutionPositions = new Vector3[blackPixelCount];
+        cubes = new GameObject[blackPixelCount];
+        initialZOffsets = new float[blackPixelCount];
+
+        float imageWidth = width * cubeSize;
+        float imageHeight = height * cubeSize;
+        Vector3 origin = new Vector3(-imageWidth / 2f, -imageHeight / 2f, 0f);
+
+        int index = 0;
+        for (int y = 0; y < height; y += pixelSkip)
+        {
+            for (int x = 0; x < width; x += pixelSkip)
+            {
+                if (solutionImage.GetPixel(x, y).r < 0.5f)
+                {
+                    Vector3 localPos = origin + new Vector3((x + 0.5f) * cubeSize, (y + 0.5f) * cubeSize, 0f);
+                    solutionPositions[index] = localPos;
+
+                    GameObject cube = Instantiate(cubePrefab, cubeContainer.transform);
+                    cube.transform.localPosition = localPos;
+                    cube.transform.localScale = Vector3.one * cubeSize;
+                    cube.SetActive(false); // <--- cubes inactive by default
+                    cubes[index] = cube;
+                    index++;
+                }
+            }
+        }
+
+        currentRotationEuler = cubeContainer.transform.eulerAngles;
+    }
+
+    private void GenerateSolutionViewportPositions()
+    {
+        if (cubes == null || puzzleCamera == null) return;
+
+        solutionViewportPositions = new Vector3[cubes.Length];
+        Vector3 prevRotation = cubeContainer.transform.eulerAngles;
+
+        cubeContainer.transform.eulerAngles = Vector3.zero;
+        for (int i = 0; i < cubes.Length; i++)
+            solutionViewportPositions[i] = puzzleCamera.WorldToViewportPoint(cubeContainer.transform.TransformPoint(solutionPositions[i]));
+        cubeContainer.transform.eulerAngles = prevRotation;
+        currentRotationEuler = cubeContainer.transform.eulerAngles;
+    }
+
+    // -----------------------------
+    // Initial Z Scatter
+    // -----------------------------
+    private void DynamicScatterPuzzle()
+    {
+        if (cubes == null || cubeContainer == null || solutionPositions == null || puzzleCamera == null) return;
+
+        float cameraDistance = Mathf.Abs(puzzleCamera.transform.position.z - cubeContainer.transform.position.z);
+        float maxScatter = cameraDistance * zScatterMultiplier;
+
+        for (int i = 0; i < cubes.Length; i++)
+        {
+            if (cubes[i] == null) continue;
+            Vector3 basePos = solutionPositions[i];
+
+            float randomZ = Random.Range(-maxScatter, maxScatter);
+            initialZOffsets[i] = randomZ;
+
+            cubes[i].transform.localPosition = new Vector3(basePos.x, basePos.y, randomZ);
+            cubes[i].transform.localScale = Vector3.one * cubeSize;
+            cubes[i].SetActive(false); // ensure cubes stay inactive until interact
+        }
+
+        float rotX = Random.Range(initialRotationMin, initialRotationMax);
+        float rotY = Random.Range(initialRotationMin, initialRotationMax);
+        cubeContainer.transform.eulerAngles = new Vector3(rotX, rotY, 0f);
+        currentRotationEuler = cubeContainer.transform.eulerAngles;
     }
 }

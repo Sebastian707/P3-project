@@ -2189,6 +2189,7 @@ MonoBehaviour:
   puzzleCamera: {fileID: 1797925809}
   alignmentText: {fileID: 1313571836}
   zScatterMultiplier: 0.2
+  playerMovementScript: {fileID: 4416926083347132228}
 --- !u!65 &894194562
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2233,7 +2234,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: b508d0cbbc8d64f45a7159de36c5995f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3085,7 +3086,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1797925806
 Transform:
   m_ObjectHideFlags: 0
