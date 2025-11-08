@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 9088136507605687197}
   - component: {fileID: 4960687856509469780}
   - component: {fileID: 1885500549026287721}
+  - component: {fileID: 6811265972196071477}
   m_Layer: 0
   m_Name: Book
   m_TagString: Book
@@ -66,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 5
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 6c494d94d870f864e99b74ec56a56158, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -136,3 +137,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6811265972196071477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8472938173502115883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 286fef2e0a878c64a946c18748789cf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  promptMessage: press [E] to pick up
+  holdPoint: {fileID: 0}
+  holdSmooth: 10
+  dropDistance: 0.8
