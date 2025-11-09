@@ -89,4 +89,23 @@ public class Interactable_Pickup : Interactable
 
         Debug.Log($"Dropped {gameObject.name}");
     }
+
+    public void ForceDrop()
+    {
+        if (heldObject == rb)
+        {
+            // Same cleanup as Drop(), but without repositioning
+            rb.useGravity = true;
+            rb.linearDamping = 1f;
+            rb.constraints = RigidbodyConstraints.None;
+
+            if (playerCollider && rb.TryGetComponent(out Collider objectCol))
+                Physics.IgnoreCollision(playerCollider, objectCol, false);
+
+            heldObject = null;
+            holding = false;
+            Debug.Log($"Force dropped {gameObject.name}");
+        }
+    }
+
 }

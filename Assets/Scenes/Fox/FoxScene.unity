@@ -2261,7 +2261,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &480284811
 Transform:
   m_ObjectHideFlags: 0
@@ -2875,7 +2875,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &573992588
 Transform:
   m_ObjectHideFlags: 0
@@ -3300,6 +3300,7 @@ GameObject:
   m_Component:
   - component: {fileID: 773788626}
   - component: {fileID: 773788627}
+  - component: {fileID: 773788628}
   m_Layer: 0
   m_Name: Slot_2
   m_TagString: Untagged
@@ -3343,6 +3344,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &773788628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773788625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b6f024dfd690cc43a44a4a16b1f84e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expectedBookID: Green
+  snapPoint: {fileID: 773788626}
+  currentBook: {fileID: 0}
 --- !u!1 &787654513
 GameObject:
   m_ObjectHideFlags: 0
@@ -6795,7 +6811,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1740656397
 Transform:
   m_ObjectHideFlags: 0
@@ -8591,11 +8607,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6ad9aeb38d99924690827a7e046bb56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bookshelf: {fileID: 543450652199691981}
-  correctColorOrder:
-  - {r: 0.41568628, g: 0.6509804, b: 0.15686275, a: 0}
+  slots:
+  - {fileID: 773788628}
+  correctOrder:
+  - Green
+  door: {fileID: 543450652199691981}
   openOffset: {x: 2, y: 0, z: 0}
-  slideSpeed: 2
+  openSpeed: 4
 --- !u!64 &919132148548598905
 MeshCollider:
   m_ObjectHideFlags: 0

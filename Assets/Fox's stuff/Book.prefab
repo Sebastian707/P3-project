@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4960687856509469780}
   - component: {fileID: 1885500549026287721}
   - component: {fileID: 6811265972196071477}
+  - component: {fileID: 3190014618731233816}
   m_Layer: 0
   m_Name: Book
   m_TagString: Book
@@ -153,3 +154,16 @@ MonoBehaviour:
   holdPoint: {fileID: 0}
   holdSmooth: 10
   dropDistance: 0.8
+--- !u!114 &3190014618731233816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8472938173502115883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa0bad985d1e8e74bac4fdba54e9951a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bookID: Green
