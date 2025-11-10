@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class BookSlot : MonoBehaviour
 {
@@ -47,6 +48,8 @@ public class BookSlot : MonoBehaviour
             rb.useGravity = false;
             rb.constraints = RigidbodyConstraints.FreezeAll;
 
+            
+            
             // Snap book into place
             other.transform.position = snapPoint.position;
             other.transform.rotation = snapPoint.rotation;
@@ -60,8 +63,9 @@ public class BookSlot : MonoBehaviour
             Debug.Log($"{book.bookID} placed in {name}");
 
             Object.FindFirstObjectByType<BookshelfPuzzle>()?.CheckPuzzle();
-
+            
         }
     }
+    
 
 }
