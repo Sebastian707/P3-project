@@ -5,7 +5,9 @@ using System.Collections;
 public class SilhouettePuzzle : Interactable
 {
     [Header("Puzzle Settings")]
-    [SerializeField] private Texture2D solutionImage;
+    [SerializeField] private Texture2D[] solutionImages = new Texture2D[8];
+    private Texture2D currentSolutionImage;
+    private System.Collections.Generic.List<Texture2D> remainingImages;
     [SerializeField] private GameObject cubePrefab;
     [SerializeField] private float alignmentThreshold = 0.05f;
     [SerializeField] private float initialRotationMin = 45f;
@@ -119,8 +121,15 @@ public class SilhouettePuzzle : Interactable
     {
         if (playerCamera == null) Debug.LogError("Player camera not assigned!");
         if (puzzleCamera == null) Debug.LogError("Puzzle camera not assigned!");
-        if (solutionImage == null) Debug.LogError("Solution image not assigned!");
+        if (solutionImages == null || solutionImages.Length == 0) 
+        {
+            Debug.LogError("Solution images array is empty!");
+            return;
+        }
         if (cubePrefab == null) Debug.LogError("Cube prefab not assigned!");
+
+        // Select random image from array (excluding null entries)
+        SelectRandomImage();
 
         meshRenderer = GetComponent<MeshRenderer>();
         if (alignmentText != null) alignmentText.gameObject.SetActive(false);
@@ -131,6 +140,52 @@ public class SilhouettePuzzle : Interactable
         GeneratePuzzle();
         GenerateSolutionViewportPositions();
         DynamicScatterPuzzle();
+    }
+
+    // -----------------------------
+    // Image Selection
+    // -----------------------------
+    private void SelectRandomImage()
+    {
+        // Initialize remaining images list if null or empty
+        if (remainingImages == null || remainingImages.Count == 0)
+        {
+            InitializeRemainingImages();
+        }
+
+        // If still no valid images, error out
+        if (remainingImages.Count == 0)
+        {
+            Debug.LogError("No valid solution images found in array!");
+            return;
+        }
+
+        // Pick random image from remaining images
+        int randomIndex = Random.Range(0, remainingImages.Count);
+        currentSolutionImage = remainingImages[randomIndex];
+        
+        // Remove selected image from remaining list
+        remainingImages.RemoveAt(randomIndex);
+        
+        Debug.Log($"Selected solution image: {currentSolutionImage.name} ({remainingImages.Count} remaining)");
+        
+        // If we've used all images, reset the pool for next time
+        if (remainingImages.Count == 0)
+        {
+            Debug.Log("All solution images completed! Resetting pool.");
+        }
+    }
+
+    private void InitializeRemainingImages()
+    {
+        remainingImages = new System.Collections.Generic.List<Texture2D>();
+        
+        // Filter out null entries and add to remaining images
+        foreach (var img in solutionImages)
+        {
+            if (img != null)
+                remainingImages.Add(img);
+        }
     }
 
     // -----------------------------
@@ -228,7 +283,15 @@ public class SilhouettePuzzle : Interactable
     private void ResetPuzzle()
     {
         puzzleCompleted = false;
+        
+        // Select a new random image on reset
+        SelectRandomImage();
+        
+        // Regenerate puzzle with new image
+        GeneratePuzzle();
+        GenerateSolutionViewportPositions();
         DynamicScatterPuzzle();
+        
         if (alignmentText != null)
             alignmentText.text = "Alignment: 0%";
     }
@@ -238,15 +301,15 @@ public class SilhouettePuzzle : Interactable
     // -----------------------------
     private void GeneratePuzzle()
     {
-        if (solutionImage == null || cubePrefab == null) return;
+        if (currentSolutionImage == null || cubePrefab == null) return;
 
         if (cubeContainer != null) Destroy(cubeContainer);
         cubeContainer = new GameObject("CubeContainer");
         cubeContainer.transform.SetParent(transform);
         cubeContainer.transform.localPosition = Vector3.zero;
 
-        int width = solutionImage.width;
-        int height = solutionImage.height;
+        int width = currentSolutionImage.width;
+        int height = currentSolutionImage.height;
 
         // scale cubes to fit max puzzle size
         float cubeSizeX = maxPuzzleSize / width;
@@ -257,7 +320,7 @@ public class SilhouettePuzzle : Interactable
         int blackPixelCount = 0;
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
-                if (solutionImage.GetPixel(x, y).r < 0.5f)
+                if (currentSolutionImage.GetPixel(x, y).r < 0.5f)
                     blackPixelCount++;
 
         solutionPositions = new Vector3[blackPixelCount];
@@ -273,7 +336,7 @@ public class SilhouettePuzzle : Interactable
         {
             for (int x = 0; x < width; x++)
             {
-                if (solutionImage.GetPixel(x, y).r < 0.5f)
+                if (currentSolutionImage.GetPixel(x, y).r < 0.5f)
                 {
                     Vector3 localPos = origin + new Vector3((x + 0.5f) * cubeSize, (y + 0.5f) * cubeSize, 0f);
                     solutionPositions[index] = localPos;
