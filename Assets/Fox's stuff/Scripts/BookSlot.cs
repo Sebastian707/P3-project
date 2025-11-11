@@ -3,9 +3,13 @@ using System.Collections;
 
 public class BookSlot : MonoBehaviour
 {
+    [Header("Slot Setup")]
     public string expectedBookID; // the correct book for this slot
     public Transform snapPoint;   // where the book should sit (child transform)
     [HideInInspector] public BookItem currentBook;
+
+    private Renderer rend;
+    private Color defaultColor;
 
     /*
     private void OnTriggerEnter(Collider other)
@@ -27,6 +31,14 @@ public class BookSlot : MonoBehaviour
         }
     }
     */
+    private void Start()
+    {
+        // Optional: visually indicate selection during interaction
+        rend = GetComponent<Renderer>();
+        if (rend)
+            defaultColor = rend.material.color;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         BookItem book = other.GetComponent<BookItem>();
@@ -48,11 +60,13 @@ public class BookSlot : MonoBehaviour
             rb.useGravity = false;
             rb.constraints = RigidbodyConstraints.FreezeAll;
 
-            
-            
+
+
             // Snap book into place
-            other.transform.position = snapPoint.position;
-            other.transform.rotation = snapPoint.rotation;
+            other.transform.SetPositionAndRotation(snapPoint.position, snapPoint.rotation);
+            other.transform.SetParent(snapPoint);
+            //other.transform.position = snapPoint.position;
+            //other.transform.rotation = snapPoint.rotation;
 
             // Parent it so it moves with the bookshelf door
             other.transform.SetParent(snapPoint);
@@ -66,6 +80,40 @@ public class BookSlot : MonoBehaviour
             
         }
     }
-    
 
+    // Called by BookshelfPuzzle to manually assign a book (used during swapping)
+    public void SetBook(BookItem newBook)
+    {
+        if (currentBook != null)
+        {
+            // Unparent and unfreeze previous book
+            currentBook.IsPlaced = false;
+            currentBook.transform.SetParent(null);
+        }
+
+        currentBook = newBook;
+
+        if (newBook != null)
+        {
+            newBook.IsPlaced = true;
+
+            // Stop physics completely so it doesn’t drop
+            newBook.rb.isKinematic = true;
+            newBook.rb.useGravity = false;
+            newBook.rb.constraints = RigidbodyConstraints.FreezeAll;
+
+            newBook.transform.SetParent(snapPoint);
+            newBook.transform.SetPositionAndRotation(snapPoint.position, snapPoint.rotation);
+
+            
+        }
+    }
+
+    // Highlight slot (used when selected in interaction mode)
+    public void Highlight(bool state)
+    {
+        var rend = GetComponent<Renderer>();
+        if (rend)
+            rend.material.color = state ? Color.yellow : defaultColor;
+    }
 }
