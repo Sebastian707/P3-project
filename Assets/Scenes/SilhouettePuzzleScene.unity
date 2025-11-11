@@ -349,8 +349,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 894194565}
-  - {fileID: 1797925806}
+  - {fileID: 1963835827}
   - {fileID: 2039340243}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2228,6 +2227,8 @@ MonoBehaviour:
   playerCamera: {fileID: 852246338}
   puzzleCamera: {fileID: 1797925809}
   alignmentText: {fileID: 1313571836}
+  cameraTransitionDuration: 1
+  fadeTransitionDuration: 1
   zScatterMultiplier: 0.2
   playerMovementScript: {fileID: 4416926083347132228}
   maxPuzzleSize: 1
@@ -2314,11 +2315,11 @@ Transform:
   m_GameObject: {fileID: 894194560}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.7174644, y: 0.8366433, z: -3.6075768}
+  m_LocalPosition: {x: -0.45211697, y: 1.5211934, z: -5.42154}
   m_LocalScale: {x: 0.6983613, y: 0.6983613, z: 0.6983613}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 338724793}
+  m_Father: {fileID: 1963835827}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1001236767
 GameObject:
@@ -2836,14 +2837,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 72
+  m_fontSizeBase: 72
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -2904,8 +2905,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 303}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 0, y: 800}
+  m_SizeDelta: {x: 913.7488, y: 228.4372}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1469026897
 GameObject:
@@ -3121,7 +3122,7 @@ GameObject:
   - component: {fileID: 1797925808}
   - component: {fileID: 1797925807}
   m_Layer: 0
-  m_Name: Camera
+  m_Name: SilhouetteCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3136,11 +3137,11 @@ Transform:
   m_GameObject: {fileID: 1797925805}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.7174644, y: 0.8366433, z: -5.004299}
+  m_LocalPosition: {x: -0.45211697, y: 1.5211934, z: -6.818262}
   m_LocalScale: {x: 0.6983613, y: 0.6983613, z: 0.6983613}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 338724793}
+  m_Father: {fileID: 1963835827}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1797925807
 MonoBehaviour:
@@ -3245,6 +3246,39 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!1 &1963835826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1963835827}
+  m_Layer: 0
+  m_Name: SilhouettePuzzleObjects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1963835827
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963835826}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.2653475, y: -0.6845501, z: 1.8139629}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 894194565}
+  - {fileID: 1797925806}
+  m_Father: {fileID: 338724793}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2039340239
 GameObject:
   m_ObjectHideFlags: 0
@@ -3258,7 +3292,7 @@ GameObject:
   - component: {fileID: 2039340241}
   - component: {fileID: 2039340240}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: SilhouetteCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
