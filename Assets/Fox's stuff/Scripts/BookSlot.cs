@@ -84,6 +84,16 @@ public class BookSlot : MonoBehaviour
     // Called by BookshelfPuzzle to manually assign a book (used during swapping)
     public void SetBook(BookItem newBook)
     {
+        currentBook = newBook;
+
+        if (currentBook != null)
+        {
+            currentBook.transform.SetParent(transform);
+            currentBook.transform.localPosition = Vector3.zero;
+            currentBook.transform.localRotation = Quaternion.identity;
+        }
+
+        /*
         if (currentBook != null)
         {
             // Unparent and unfreeze previous book
@@ -107,6 +117,7 @@ public class BookSlot : MonoBehaviour
 
             
         }
+        */
     }
 
     // Highlight slot (used when selected in interaction mode)
