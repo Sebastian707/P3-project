@@ -29,6 +29,9 @@ public class SilhouettePuzzle : Interactable
     [Header("Prompt Message")]
     [SerializeField] private GameObject puzzlePromptMessage;
 
+    [Header("Tutorial UI")]
+    [SerializeField] private GameObject tutorialUI;
+
     [Header("Z-axis Scatter")]
     [SerializeField] private float zScatterMultiplier = 0.05f;
 
@@ -119,6 +122,10 @@ public class SilhouettePuzzle : Interactable
         if (playerMovementScript != null)
             playerMovementScript.enabled = true;
 
+        // Hide tutorial UI when puzzle ends
+        if (tutorialUI != null)
+            StartCoroutine(FadeTutorialUI(1f, 0f, fadeTransitionDuration));
+
         // Fade out
         StartCoroutine(FadeCubes(1f, 0f, fadeTransitionDuration));
         if (meshRenderer != null)
@@ -191,6 +198,12 @@ public class SilhouettePuzzle : Interactable
         {
             alignmentText.text = "Alignment: 0%";
             StartCoroutine(FadeAlignmentText(0f, 1f, fadeTransitionDuration));
+        }
+
+        // Fade in tutorial UI after camera finishes moving
+        if (isEntering && tutorialUI != null)
+        {
+            StartCoroutine(FadeTutorialUI(0f, 1f, fadeTransitionDuration));
         }
 
         interactionLocked = false;
@@ -317,6 +330,34 @@ public class SilhouettePuzzle : Interactable
             alignmentText.gameObject.SetActive(false);
     }
 
+    private IEnumerator FadeTutorialUI(float startAlpha, float endAlpha, float duration)
+    {
+        if (tutorialUI == null) yield break;
+
+        CanvasGroup cg = tutorialUI.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = tutorialUI.gameObject.AddComponent<CanvasGroup>();
+
+        if (endAlpha > startAlpha)
+            tutorialUI.SetActive(true);
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            t = t * t * (3f - 2f * t);
+
+            cg.alpha = Mathf.Lerp(startAlpha, endAlpha, t);
+            yield return null;
+        }
+
+        cg.alpha = endAlpha;
+
+        if (endAlpha == 0f)
+            tutorialUI.SetActive(false);
+    }
+
     private IEnumerator UnlockInteractionNextFrame()
     {
         yield return null;
@@ -341,6 +382,10 @@ public class SilhouettePuzzle : Interactable
 
         meshRenderer = GetComponent<MeshRenderer>();
         if (alignmentText != null) alignmentText.gameObject.SetActive(false);
+
+        // Initialize tutorial UI as inactive
+        if (tutorialUI != null)
+            tutorialUI.SetActive(false);
 
         if (playerCamera != null) playerCamera.gameObject.SetActive(true);
         if (puzzleCamera != null) puzzleCamera.gameObject.SetActive(false);
