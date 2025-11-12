@@ -10,10 +10,8 @@ public class TurnObject : Interactable
     public float duration = 2f; // duration of the rotation in seconds
     protected override void Interact()
     {
-        float time = duration;
-        while (time >= 0)
-        {
-            gameObject.transform.Rotate(0 + xAngle, yAngle, zAngle);
-        }
+       gameObject.transform.Rotate(transform.rotation.x + xAngle, transform.rotation.y + yAngle, transform.rotation.z + zAngle);
+
+        
     }
 }
