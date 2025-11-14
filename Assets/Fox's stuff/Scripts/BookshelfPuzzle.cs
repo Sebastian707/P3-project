@@ -196,6 +196,10 @@ public class BookshelfPuzzle : MonoBehaviour
                     slot.currentBook.rb.constraints = RigidbodyConstraints.FreezeAll;
                 }
             }
+
+            // Automatically exit interaction when solved
+            if (isInteracting)
+                ExitInteraction();
         }
         else
         {
