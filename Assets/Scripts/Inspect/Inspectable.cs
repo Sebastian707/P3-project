@@ -1,11 +1,6 @@
 using UnityEngine;
 
-public class InteractablePT : Interactable
+public class Inspectable : MonoBehaviour
 {
-    public InspectSystem2 inspectSystem;
-
-    public override void BaseInteract()
-    {
-        inspectSystem.ToggleInspect();
-    }
+    public string promptMessage = "Inspect (E)";
 }
