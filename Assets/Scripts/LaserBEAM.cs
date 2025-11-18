@@ -15,7 +15,8 @@ public class LaserBEAM : MonoBehaviour
     {
         laserLine = GetComponent<LineRenderer>();
         laserLine.SetPosition(0, laserStartPoint.position);
-        
+        currentTarget = enabled ? GameObject.FindGameObjectWithTag("LaserTag") : null;
+
     }
     private void Update()
     {
@@ -59,6 +60,7 @@ public class LaserBEAM : MonoBehaviour
                     if(hit.transform.tag != "LaserTag")
                     {
                         Debug.Log("we falsing it");
+                        
                         currentTarget.GetComponent<LaserTarget>().lightTouched = false;
                         
                     }
