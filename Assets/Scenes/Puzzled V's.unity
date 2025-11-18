@@ -773,7 +773,7 @@ MonoBehaviour:
   laserTargets:
   - {fileID: 665773373}
   totalScore: 0
-  targetScore: 2
+  targetScore: 1
   blurryObject: {fileID: 665773373}
   blurryMaterials:
   - {fileID: 2100000, guid: 9f2e037c43b51bc4b97ff1956ecaa151, type: 2}
