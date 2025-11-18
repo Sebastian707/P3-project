@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InspectSystem2 : MonoBehaviour
+public class InspectSystem : MonoBehaviour
 {
     public Transform inspectPosition;   // empty transform in front of camera
     public float rotationSpeed = 100f;
@@ -11,6 +11,13 @@ public class InspectSystem2 : MonoBehaviour
     private Vector3 previousMousePos;
     private Transform originalParent;
     private bool inspecting = false;
+
+    public bool MovementSmoothing = true;
+    public bool RotationSmoothing = false;
+    private bool previousSmoothing;
+
+    public float MovementSmoothingValue = 25f;
+    public float RotationSmoothingValue = 5.0f;
 
     void Update()
     {
@@ -39,7 +46,7 @@ public class InspectSystem2 : MonoBehaviour
         }
     }
 
-    
+
 
     public void StartInspect(Transform obj)
     {
@@ -50,6 +57,10 @@ public class InspectSystem2 : MonoBehaviour
         GameObject clone = Instantiate(obj.gameObject);
         clone.name = obj.name + "_InspectClone";
 
+        
+
+        Time.timeScale = 0f; // Pause game
+
         if (clone.GetComponent<Collider>()) Destroy(clone.GetComponent<Collider>());
         if (clone.GetComponent<Rigidbody>()) Destroy(clone.GetComponent<Rigidbody>());
 
@@ -58,7 +69,7 @@ public class InspectSystem2 : MonoBehaviour
         currentObject.localPosition = Vector3.zero;
         currentObject.localRotation = Quaternion.identity;
         currentObject.localScale = inspectScale;
-        
+
     }
 
 
@@ -66,12 +77,14 @@ public class InspectSystem2 : MonoBehaviour
     {
         if (!inspecting) return;
 
+        Time.timeScale = 1f; // Resume game
+        
+
         Destroy(currentObject.gameObject); // destroy the clone
         currentObject = null;
         inspecting = false;
     }
-    
-
-
 
 }
+
+

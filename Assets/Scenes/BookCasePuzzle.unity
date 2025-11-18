@@ -325,6 +325,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 9018249871969862650, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -694,8 +698,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inspectPosition: {fileID: 542647338}
-  rotationSpeed: 100
+  rotationSpeed: 600
   inspectScale: {x: 0.03, y: 0.03, z: 0.03}
+  MovementSmoothing: 1
+  RotationSmoothing: 1
+  MovementSmoothingValue: 25
+  RotationSmoothingValue: 5
 --- !u!1001 &682488456
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1034,6 +1042,10 @@ MonoBehaviour:
   inspectPosition: {fileID: 0}
   rotationSpeed: 100
   inspectScale: {x: 1, y: 1, z: 1}
+  MovementSmoothing: 1
+  RotationSmoothing: 0
+  MovementSmoothingValue: 25
+  RotationSmoothingValue: 5
 --- !u!4 &1265365932 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4791580613341970, guid: 07304663e9c211941b363a5c538f2ff7, type: 3}
@@ -1414,13 +1426,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1630881063}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.30564627, y: -0.6141741, z: -0.055273335, w: 0.72547597}
   m_LocalPosition: {x: 17.824951, y: 2.0425906, z: -34.253963}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 893712992}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 22.06, y: -86.366, z: -29.448}
 --- !u!114 &1630881066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1857,7 +1869,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   promptMessage: 9012319023
-  inspectSystem: {fileID: 0}
+  inspectSystem: {fileID: 669810741}
 --- !u!4 &2082371140 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8345070699079395522, guid: 09aade0ecefd01e4b8f7661acf64f5c2, type: 3}
@@ -1889,7 +1901,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 893712992}
-  - {fileID: 1444655020}
   - {fileID: 1453233189}
+  - {fileID: 1444655020}
   - {fileID: 1908516399}
   - {fileID: 899390192}

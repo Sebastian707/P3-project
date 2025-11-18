@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class Interactable_child2 : Interactable
 {
-    [SerializeField] private InspectSystem2 inspectSystem;
+    [SerializeField] private InspectSystem inspectSystem;
 
     void Start()
     {
         // Optional: auto-assign if not set in inspector
         if (inspectSystem == null)
         {
-            inspectSystem = Object.FindAnyObjectByType<InspectSystem2>();
+            inspectSystem = Object.FindAnyObjectByType<InspectSystem>();
         }
     }
 
