@@ -1227,8 +1227,8 @@ Transform:
   m_GameObject: {fileID: 61338530}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071065, z: -0, w: 0.7071071}
-  m_LocalPosition: {x: -2.0770462, y: -0.00074804516, z: 11.562542}
-  m_LocalScale: {x: 12.525784, y: 1, z: 0.056317803}
+  m_LocalPosition: {x: -2.0770462, y: -0.00074804516, z: 11.246}
+  m_LocalScale: {x: 13.158336, y: 1, z: 0.056317803}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 151958444}
@@ -51530,13 +51530,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704094564}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -79.4631, y: 39.38, z: 94.3244}
+  m_LocalRotation: {x: -0, y: 0.70710677, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -64.84714, y: 39.380825, z: 74.09}
   m_LocalScale: {x: 4.7736473, y: 0.09, z: 20.668905}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 231691124}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!65 &1704094566
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -59885,6 +59885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6ad9aeb38d99924690827a7e046bb56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  devOpenKey: 282
   slots:
   - {fileID: 422632122}
   - {fileID: 852382608}
@@ -59898,8 +59899,10 @@ MonoBehaviour:
   - Blue
   - Purple
   door: {fileID: 2001864428}
-  openOffset: {x: 2, y: 0, z: 0}
-  openSpeed: 4
+  openSpeed: 2
+  forwardDistance: 3.9
+  sideDistance: 1
+  moveDuration: 0.4
   bookshelfCameraPoint: {fileID: 1360285584}
   mainCamera: {fileID: 852246338}
   cameraMoveSpeed: 3

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -5,11 +6,16 @@ using UnityEngine;
 public class BookshelfPuzzle : MonoBehaviour
 {
     [Header("Puzzle Setup")]
+    public KeyCode devOpenKey = KeyCode.F1;
     public List<BookSlot> slots;               // assign in Inspector
     public List<string> correctOrder;          // e.g., ["Red", "Green", "Blue"]
     public Transform door;                     // bookshelf door to animate
-    public Vector3 openOffset = new Vector3(2f, 0f, 0f); // how far to move open
+    //public Vector3 openOffset = new Vector3(2f, 0f, 0f); // how far to move open
     public float openSpeed = 2f;
+
+    public float forwardDistance = 0.5f;   // how far forward/back before sliding
+    public float sideDistance = 2f;        // how far it slides open
+    public float moveDuration = 0.7f;
 
     [Header("Interaction")]
     public Transform bookshelfCameraPoint; // where the camera moves when interacting
@@ -21,21 +27,31 @@ public class BookshelfPuzzle : MonoBehaviour
 
     private bool isOpen = false;
     private bool isInteracting = false;
-    private Vector3 closedPos;
-    private Vector3 targetPos;
+    //private Vector3 closedPos;
+    //private Vector3 targetPos;
     private Vector3 cameraReturnPos;
     private Quaternion cameraReturnRot;
     private BookSlot selectedSlot;
 
     void Start()
     {
-        closedPos = door.position;
-        targetPos = closedPos;
+        //closedPos = door.position;
+        //targetPos = closedPos;
     }
 
     void Update()
     {
-        door.position = Vector3.Lerp(door.position, targetPos, Time.deltaTime * openSpeed);
+        // --------------------
+        // DEV FORCE OPEN SHORTCUT
+        // --------------------
+        if (Input.GetKeyDown(devOpenKey))
+        {
+            Debug.Log("DEV: Force-opening bookshelf.");
+            isOpen = true;
+            StartCoroutine(OpenDoorSequence());
+        }
+
+        //door.position = Vector3.Lerp(door.position, targetPos, Time.deltaTime * openSpeed);
 
         if (isInteracting)
         {
@@ -185,7 +201,9 @@ public class BookshelfPuzzle : MonoBehaviour
         {
             Debug.Log("Puzzle solved! Bookshelf opening...");
             isOpen = true;
-            targetPos = closedPos + openOffset;
+
+            //targetPos = closedPos + openOffset;
+            StartCoroutine(OpenDoorSequence());
 
             foreach (var slot in slots)
             {
@@ -206,4 +224,36 @@ public class BookshelfPuzzle : MonoBehaviour
             Debug.Log("Incorrect order. Try again.");
         }
     }
+
+    private IEnumerator OpenDoorSequence()
+    {
+        Transform d = door;
+
+        // Step 1: Move along local X (slide to the side)
+        Vector3 start = d.localPosition;
+        Vector3 sideTarget = start + Vector3.right * sideDistance;
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime / moveDuration;
+            d.localPosition = Vector3.Lerp(start, sideTarget, t);
+            yield return null;
+        }
+
+        // Step 2: Move along local Z (move backwards)
+        Vector3 slideStart = d.localPosition;
+        Vector3 backwardTarget = slideStart + Vector3.back * forwardDistance;
+        // if you want it to move *forward*, switch Vector3.back to Vector3.forward
+
+        t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime / moveDuration;
+            d.localPosition = Vector3.Lerp(slideStart, backwardTarget, t);
+            yield return null;
+        }
+    }
+
+
 }
