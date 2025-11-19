@@ -37,6 +37,9 @@ public class SilhouettePuzzle : Interactable
 
     [Header("Player Control")]
     [SerializeField] private MonoBehaviour playerMovementScript;
+    
+    [Header("Player Mesh")]
+    [SerializeField] private GameObject playerMesh;
 
     [Header("Puzzle Scaling")]
     [SerializeField] private float maxPuzzleSize = 2f;
@@ -79,6 +82,9 @@ public class SilhouettePuzzle : Interactable
 
         if (playerMovementScript != null)
             playerMovementScript.enabled = false;
+        
+        if (playerMesh != null)
+            playerMesh.SetActive(false);
 
         // Hide prompt while interacting
         if (puzzlePromptMessage != null)
@@ -121,6 +127,9 @@ public class SilhouettePuzzle : Interactable
 
         if (playerMovementScript != null)
             playerMovementScript.enabled = true;
+        
+        if (playerMesh != null)
+            playerMesh.SetActive(true);
 
         // Hide tutorial UI when puzzle ends
         if (tutorialUI != null)
