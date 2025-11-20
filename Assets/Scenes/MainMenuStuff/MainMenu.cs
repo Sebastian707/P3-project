@@ -7,8 +7,6 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject SettingsMenu;
     [SerializeField] private GameObject CreditsMenu;
     [SerializeField] private GameObject ConfirmMenu;
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip buttonClickSound;
     [SerializeField] private string targetScene;
 
 
@@ -55,16 +53,4 @@ public class MainMenu : MonoBehaviour
         
     }
 
-    public void OnClick()
-    {
-        PlaySound(buttonClickSound);
-    }
-
-    private void PlaySound(AudioClip clip)
-    {
-        if (clip != null && audioSource != null)
-        {
-            audioSource.PlayOneShot(clip);
-        }
-    }
 }
