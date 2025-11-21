@@ -10,19 +10,19 @@ public class AllActiveTrigger : MonoBehaviour
     [Header("Trigger Once?")]
     public bool triggerOnce = true;
     private bool hasTriggered = false;
+    private bool doorOpen;
+    public GameObject doorToUnlock;
 
     private void Update()
     {
         if (objectsToCheck.Count == 0) return;
 
-        // Check if all objects are active
         foreach (var obj in objectsToCheck)
         {
             if (obj == null || !obj.activeSelf)
-                return; // Stop here if any object is inactive
+                return; 
         }
 
-        // All objects are active
         if (!triggerOnce || !hasTriggered)
         {
             StartCoroutine(CustomAction());
@@ -35,6 +35,7 @@ public class AllActiveTrigger : MonoBehaviour
         Debug.Log("All objects are active! Coroutine started.");
 
         yield return new WaitForSeconds(2f);
+        doorToUnlock.GetComponent<Animator>().SetBool("IsOpen", true);
 
         Debug.Log("Coroutine finished!");
     }
