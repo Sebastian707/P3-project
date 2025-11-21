@@ -422,12 +422,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f5be94fa68d16f48b692a733f06be97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blendMode: 1
+  blendMode: 0
   weight: 1
   priority: 0
   size: {x: 1, y: 1, z: 1}
-  closeAmount: 0
-  smoothness: 0.2
+  closeAmount: 0.306
+  smoothness: 0.187
 --- !u!114 &1217257744
 MonoBehaviour:
   m_ObjectHideFlags: 0
