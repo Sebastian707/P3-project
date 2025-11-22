@@ -2,47 +2,49 @@ using UnityEngine;
 
 public class EyeCloseController : MonoBehaviour
 {
-    [Header("Material (same one used in your Renderer Feature)")]
+    [Header("Material (same one used in Renderer Feature)")]
     public Material eyeMaterial;
 
-    [Header("Shader Property Names")]
-    public string eyeCloseProperty = "_Eyesclosed"; // Confirm this is correct in ShaderGraph
+    [Header("Shader Property Names (match ShaderGraph references)")]
+    public string eyesClosedProperty = "_Eyesclosed";
+    public string smoothnessProperty = "_Smoothness";
 
-    [Header("Animation Settings")]
-    public float closeSpeed = 2f;     // speed of closing
-    public float openSpeed = 2f;      // speed of opening
+    [Header("Eyes Closed Settings")]
+    public float closeSpeed = 2f;
+    public float openSpeed = 2f;
+
+    [Header("Smoothness Auto-Link Settings")]
+    [Range(0f, 1f)]
+    public float maxSmoothness = 0.8f;   // smoothness when fully closed
+    public AnimationCurve smoothnessCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     [Header("Input")]
-    public KeyCode toggleKey = KeyCode.B; // press B to blink
+    public KeyCode toggleKey = KeyCode.B;
 
-    private float targetValue = 0f;   // 0 = open, 1 = closed
-    private float currentValue = 0f;
+    private float targetEyeValue = 0f;
+    private float currentEyeValue = 0f;
 
     void Update()
     {
-        // Toggle blink with key
+        // ### Input ###
         if (Input.GetKeyDown(toggleKey))
-        {
-            targetValue = 1f; // close
-        }
+            targetEyeValue = 1f;
+
         if (Input.GetKeyUp(toggleKey))
-        {
-            targetValue = 0f; // open
-        }
+            targetEyeValue = 0f;
 
-        // Smooth animation
-        float speed = targetValue > currentValue ? closeSpeed : openSpeed;
+        // ### Eyes closed animation ###
+        float speed = targetEyeValue > currentEyeValue ? closeSpeed : openSpeed;
+        currentEyeValue = Mathf.MoveTowards(currentEyeValue, targetEyeValue, Time.deltaTime * speed);
 
-        currentValue = Mathf.MoveTowards(
-            currentValue,
-            targetValue,
-            Time.deltaTime * speed
-        );
+        // ### Smoothness follows eye closing ###
+        float smoothness = smoothnessCurve.Evaluate(currentEyeValue) * maxSmoothness;
 
-        // Apply to shader
+        // ### Apply values ###
         if (eyeMaterial != null)
         {
-            eyeMaterial.SetFloat(eyeCloseProperty, currentValue);
+            eyeMaterial.SetFloat(eyesClosedProperty, currentEyeValue);
+            eyeMaterial.SetFloat(smoothnessProperty, smoothness);
         }
     }
 }
