@@ -20,7 +20,10 @@ public class EyesClosingFeature : ScriptableRendererFeature
                 return;
 
             CommandBuffer cmd = CommandBufferPool.Get("EyesClosingPass");
-            Blitter.BlitCameraTexture(cmd, ref renderingData, mat, 0);
+
+            // Unity 6 way to do fullscreen shader:
+            CoreUtils.DrawFullScreen(cmd, mat);
+
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }
