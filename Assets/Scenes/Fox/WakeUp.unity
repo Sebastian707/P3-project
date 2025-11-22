@@ -425,7 +425,7 @@ MonoBehaviour:
   eyesClosedProperty: _Eyesclosed
   smoothnessProperty: _Smoothness
   closeSpeed: 2
-  openSpeed: 0
+  openSpeed: 2
   maxSmoothness: 0.396
   smoothnessCurve:
     serializedVersion: 2
