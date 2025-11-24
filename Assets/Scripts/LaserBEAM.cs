@@ -10,12 +10,13 @@ public class LaserBEAM : MonoBehaviour
     [SerializeField] private Vector3 _offSet;
     [SerializeField] private bool mirrorReflect = true;
     [SerializeField] private GameObject currentTarget;
-    public string targetName;
+    
     private void Start()
     {
         laserLine = GetComponent<LineRenderer>();
         laserLine.SetPosition(0, laserStartPoint.position);
         currentTarget = enabled ? GameObject.FindGameObjectWithTag("LaserTag") : null;
+        
 
     }
     private void Update()
@@ -49,13 +50,7 @@ public class LaserBEAM : MonoBehaviour
                         currentTarget.GetComponent<LaserTarget>().lightTouched = true;
                         
                         //Debug.Log("Hit Non Mirror Object");
-                        for (int j = (i + 1); j <= maxReflectBounce; j++)
-                        {
-                        laserLine.SetPosition(j, hit.point);
-
-                        }
                         
-                        break;
                     }
                     if(hit.transform.tag != "LaserTag")
                     {
@@ -64,6 +59,13 @@ public class LaserBEAM : MonoBehaviour
                         currentTarget.GetComponent<LaserTarget>().lightTouched = false;
                         
                     }
+                    for (int j = (i + 1); j <= maxReflectBounce; j++)
+                    {
+                        laserLine.SetPosition(j, hit.point);
+
+                    }
+
+                    break;
 
 
 
