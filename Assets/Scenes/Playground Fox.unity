@@ -3378,7 +3378,7 @@ PrefabInstance:
     - target: {fileID: 6811265972196071477, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: holdPoint
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1138749366}
     - target: {fileID: 8472938173502115883, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: m_Name
       value: Book (4)
@@ -12923,7 +12923,7 @@ PrefabInstance:
     - target: {fileID: 6811265972196071477, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: holdPoint
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1138749366}
     - target: {fileID: 8472938173502115883, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: m_Name
       value: Book (3)
@@ -18439,7 +18439,7 @@ PrefabInstance:
     - target: {fileID: 6811265972196071477, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: holdPoint
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1138749366}
     - target: {fileID: 8472938173502115883, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: m_Name
       value: Book
@@ -32721,7 +32721,7 @@ PrefabInstance:
     - target: {fileID: 6811265972196071477, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: holdPoint
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1138749366}
     - target: {fileID: 8472938173502115883, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: m_Name
       value: Book (2)
@@ -36547,7 +36547,7 @@ MonoBehaviour:
   sideDistance: 1
   moveDuration: 0.4
   bookshelfCameraPoint: {fileID: 1762291891}
-  mainCamera: {fileID: 0}
+  mainCamera: {fileID: 852246338}
   cameraMoveSpeed: 3
   interactKey: 101
   exitKey: 99
@@ -91010,7 +91010,7 @@ PrefabInstance:
     - target: {fileID: 6811265972196071477, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: holdPoint
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1138749366}
     - target: {fileID: 8472938173502115883, guid: f4923c7c8c23c10468b11b67f3d059f9, type: 3}
       propertyPath: m_Name
       value: Book (1)
