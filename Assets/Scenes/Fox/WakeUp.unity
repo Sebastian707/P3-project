@@ -377,7 +377,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
-<<<<<<< HEAD
 --- !u!1 &1217257741
 GameObject:
   m_ObjectHideFlags: 0
@@ -453,11 +452,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   toggleKey: 98
-=======
->>>>>>> parent of 345aafd (volume pass)
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 275725744}
   - {fileID: 802555280}
+  - {fileID: 1217257742}
