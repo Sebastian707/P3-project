@@ -6,6 +6,8 @@ using UnityEngine.Serialization;
 public class SilhouettePuzzle : Interactable
 {
     [Header("Puzzle Settings")]
+    [SerializeField] private SilhouettePuzzleManager sequenceManager;
+    [SerializeField] private bool isFirstPuzzle = true; // Toggle this per puzzle
     [SerializeField] private Texture2D[] solutionImages = new Texture2D[8];
     private Texture2D currentSolutionImage;
     private System.Collections.Generic.List<Texture2D> remainingImages;
@@ -529,6 +531,15 @@ public class SilhouettePuzzle : Interactable
 
         StopInteract();
         completionCoroutineRunning = false;
+
+        // Notify the sequence manager
+        if (sequenceManager != null)
+        {
+            if (isFirstPuzzle)
+                sequenceManager.OnFirstPuzzleComplete();
+            else
+                sequenceManager.OnSecondPuzzleComplete();
+        }
     }
 
     private void ResetPuzzle()
