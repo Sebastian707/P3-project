@@ -8,28 +8,33 @@ public class SilhouettePuzzleManager : MonoBehaviour
     [SerializeField] private SilhouettePuzzle secondPuzzle;
 
     [Header("Spotlight & Audio")]
-    [SerializeField] private GameObject firstSpotlight;
-    [SerializeField] private GameObject secondSpotlight;
+    [SerializeField] private GameObject secondPuzzleSpotlight;
+    [SerializeField] private GameObject doorSpotlight;
     [SerializeField] private AudioSource spotlightAudio;
 
     [Header("Door")]
-    [SerializeField] private Animator doorAnimator;
-    [SerializeField] private string doorOpenBoolName = "IsOpen";
+    [SerializeField] private GameObject door;
+    [SerializeField] private float doorOpenYOffset = 5f;
+    [SerializeField] private float doorAnimationDuration = 2f;
 
     [Header("Fade Settings")]
     [SerializeField] private float fadeDuration = 1f;
 
     private void Start()
     {
+        // Ensure spotlights start inactive
+        if (secondPuzzleSpotlight != null)
+            secondPuzzleSpotlight.SetActive(false);
+        
+        if (doorSpotlight != null)
+            doorSpotlight.SetActive(false);
+
         // Ensure second puzzle starts inactive
         if (secondPuzzle != null)
             secondPuzzle.gameObject.SetActive(false);
-
-        if (firstSpotlight != null)
-            firstSpotlight.SetActive(true);
     }
 
-    // Call this from SilhouettePuzzle when puzzle completes
+    // Call this from SilhouettePuzzle when first puzzle completes
     public void OnFirstPuzzleComplete()
     {
         StartCoroutine(FirstPuzzleCompleteSequence());
@@ -43,25 +48,17 @@ public class SilhouettePuzzleManager : MonoBehaviour
             yield return StartCoroutine(FadeOutAndDisable(firstPuzzle.gameObject));
         }
 
-        yield return new WaitForSeconds(0.5f);
-
-        // Deactivate first spotlight
-        if (firstSpotlight != null)
-            firstSpotlight.SetActive(false);
-
-        // Play spotlight sound
-        if (spotlightAudio != null)
-            spotlightAudio.Play();
-
-        // Activate second puzzle
+        // Activate second puzzle immediately
         if (secondPuzzle != null)
             secondPuzzle.gameObject.SetActive(true);
 
-        yield return new WaitForSeconds(1f);
+        // Play spotlight sound (non-blocking)
+        if (spotlightAudio != null)
+            spotlightAudio.Play();
 
-        // Activate second spotlight
-        if (secondSpotlight != null)
-            secondSpotlight.SetActive(true);
+        // Activate second puzzle spotlight (non-blocking)
+        if (secondPuzzleSpotlight != null)
+            secondPuzzleSpotlight.SetActive(true);
     }
 
     public void OnSecondPuzzleComplete()
@@ -77,21 +74,26 @@ public class SilhouettePuzzleManager : MonoBehaviour
             yield return StartCoroutine(FadeOutAndDisable(secondPuzzle.gameObject));
         }
 
-        yield return new WaitForSeconds(0.5f);
-
-        // Deactivate second spotlight
-        if (secondSpotlight != null)
-            secondSpotlight.SetActive(false);
-
-        // Open door
-        if (doorAnimator != null)
-            doorAnimator.SetBool(doorOpenBoolName, true);
-
-        yield return new WaitForSeconds(0.5f);
-
-        // Play spotlight sound
+        // Play spotlight sound (non-blocking)
         if (spotlightAudio != null)
             spotlightAudio.Play();
+
+        // Activate door spotlight (non-blocking)
+        if (doorSpotlight != null)
+            doorSpotlight.SetActive(true);
+
+        yield return new WaitForSeconds(0.2f);
+
+        // Open door by moving it up
+        if (door != null)
+        {
+            Vector3 currentPos = door.transform.position;
+            Vector3 openPos = currentPos;
+            openPos.y += doorOpenYOffset;
+            yield return StartCoroutine(MoveDoor(currentPos, openPos, doorAnimationDuration));
+        }
+
+        Debug.Log("Puzzle sequence complete!");
     }
 
     private IEnumerator FadeOutAndDisable(GameObject target)
@@ -120,5 +122,24 @@ public class SilhouettePuzzleManager : MonoBehaviour
         mat.color = final;
         renderer.enabled = false;
         target.SetActive(false);
+    }
+
+    private IEnumerator MoveDoor(Vector3 startPos, Vector3 endPos, float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            t = t * t * (3f - 2f * t);
+
+            Vector3 newPos = Vector3.Lerp(startPos, endPos, t);
+            door.transform.position = newPos;
+
+            yield return null;
+        }
+
+        door.transform.position = endPos;
     }
 }
