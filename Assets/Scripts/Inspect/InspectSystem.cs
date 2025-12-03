@@ -2,51 +2,85 @@ using UnityEngine;
 
 public class InspectSystem : MonoBehaviour
 {
-    public Transform inspectPosition;   // empty transform in front of camera
+    [Header("References")]
+    public Transform inspectPosition;
+
+    [Header("Rotation Settings")]
     public float rotationSpeed = 100f;
 
-    [SerializeField] private Vector3 inspectScale = Vector3.one;
+    [Header("Zoom Settings")]
+    public float zoomSpeed = 0.5f;
+    public float minZoom = 0.5f;
+    public float maxZoom = 2.0f;
+
+    [Header("Movement Settings")]
+    public Vector3 inspectScale = Vector3.one;
 
     private Transform currentObject;
-    private Vector3 previousMousePos;
-    private Transform originalParent;
+    private float rotationX = 0f;
+    private float rotationY = 0f;
+    private float targetZoom = 1f;
+    private float currentZoom = 1f;
     private bool inspecting = false;
-
-    public bool MovementSmoothing = true;
-    public bool RotationSmoothing = false;
-    private bool previousSmoothing;
-
-    public float MovementSmoothingValue = 25f;
-    public float RotationSmoothingValue = 5.0f;
 
     void Update()
     {
-        if (!inspecting) return;
+        if (!inspecting || !currentObject) return;
 
-        // Rotate object while holding left mouse
-        if (Input.GetMouseButtonDown(0))
-            previousMousePos = Input.mousePosition;
+        HandleMouseRotation();
+        HandleZoom();
+        ApplyTransforms();
 
+        if (Input.GetMouseButtonDown(1))
+            ResetRotation();
+
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E))
+            EndInspect();
+    }
+
+    private void HandleMouseRotation()
+    {
         if (Input.GetMouseButton(0))
         {
-            Vector3 delta = Input.mousePosition - previousMousePos;
-            float rotX = delta.y * rotationSpeed * Time.deltaTime;
-            float rotY = -delta.x * rotationSpeed * Time.deltaTime;
+            float mouseX = Input.GetAxis("Mouse X");
+            float mouseY = Input.GetAxis("Mouse Y");
 
-            currentObject.Rotate(Camera.main.transform.up, rotY, Space.World);
-            currentObject.Rotate(Camera.main.transform.right, rotX, Space.World);
-
-            previousMousePos = Input.mousePosition;
-        }
-
-        // Exit inspect
-        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E))
-        {
-            EndInspect();
+            // Accumulate rotation based on mouse movement
+            rotationY += mouseX * rotationSpeed * Time.unscaledDeltaTime;
+            rotationX -= mouseY * rotationSpeed * Time.unscaledDeltaTime;
         }
     }
 
+    private void HandleZoom()
+    {
+        float scroll = Input.mouseScrollDelta.y;
+        if (scroll != 0f)
+        {
+            targetZoom -= scroll * zoomSpeed;
+            targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
+        }
+    }
 
+    private void ApplyTransforms()
+    {
+        // Apply rotation using accumulated Euler angles
+        currentObject.rotation = Quaternion.Euler(rotationX, rotationY, 0f);
+
+        // Smooth zoom
+        currentZoom = Mathf.Lerp(currentZoom, targetZoom, 10f * Time.unscaledDeltaTime);
+
+        // Lock position
+        currentObject.position = inspectPosition.position;
+
+        // Apply scale
+        currentObject.localScale = inspectScale * currentZoom;
+    }
+
+    private void ResetRotation()
+    {
+        rotationX = 0f;
+        rotationY = 0f;
+    }
 
     public void StartInspect(Transform obj)
     {
@@ -54,37 +88,42 @@ public class InspectSystem : MonoBehaviour
 
         inspecting = true;
 
+        // Create clone
         GameObject clone = Instantiate(obj.gameObject);
         clone.name = obj.name + "_InspectClone";
 
-        
+        // Remove physics components
+        foreach (var col in clone.GetComponentsInChildren<Collider>())
+            Destroy(col);
+        foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
+            Destroy(rb);
 
-        Time.timeScale = 0f; // Pause game
-
-        if (clone.GetComponent<Collider>()) Destroy(clone.GetComponent<Collider>());
-        if (clone.GetComponent<Rigidbody>()) Destroy(clone.GetComponent<Rigidbody>());
+        // Set layer to ignore raycasts
+        clone.layer = LayerMask.NameToLayer("Ignore Raycast");
 
         currentObject = clone.transform;
-        currentObject.SetParent(inspectPosition);
-        currentObject.localPosition = Vector3.zero;
-        currentObject.localRotation = Quaternion.identity;
+        currentObject.position = inspectPosition.position;
+        currentObject.rotation = Quaternion.identity;
         currentObject.localScale = inspectScale;
 
-    }
+        // Reset rotation values
+        rotationX = 0f;
+        rotationY = 0f;
 
+        targetZoom = 1f;
+        currentZoom = 1f;
+
+        Time.timeScale = 0f;
+    }
 
     public void EndInspect()
     {
-        if (!inspecting) return;
+        Time.timeScale = 1f;
 
-        Time.timeScale = 1f; // Resume game
-        
+        if (currentObject)
+            Destroy(currentObject.gameObject);
 
-        Destroy(currentObject.gameObject); // destroy the clone
         currentObject = null;
         inspecting = false;
     }
-
 }
-
-
