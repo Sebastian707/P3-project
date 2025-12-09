@@ -54,7 +54,7 @@ public class LaserBEAM : MonoBehaviour
                     }
                     if(hit.transform.tag != "LaserTag")
                     {
-                        Debug.Log("we falsing it");
+                        
                         
                         currentTarget.GetComponent<LaserTarget>().lightTouched = false;
                         
