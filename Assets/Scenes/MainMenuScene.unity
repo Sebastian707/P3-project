@@ -3434,7 +3434,7 @@ MonoBehaviour:
   SettingsMenu: {fileID: 1963209615}
   CreditsMenu: {fileID: 357528129}
   ConfirmMenu: {fileID: 713903029}
-  targetScene: Main Playground
+  targetScene: Playground
 --- !u!1 &713903029
 GameObject:
   m_ObjectHideFlags: 0
